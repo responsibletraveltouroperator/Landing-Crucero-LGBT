@@ -1,6 +1,15 @@
+"use client";
+import { useState } from "react";
 import styles from "./page.module.css";
+import Link from "next/link";
 
 export default function Home() {
+  const [activeAccordion, setActiveAccordion] = useState<string | null>("galapagos");
+
+  const toggleAccordion = (id: string) => {
+    setActiveAccordion(activeAccordion === id ? null : id);
+  };
+
   return (
     <main>
       {/* Navbar */}
@@ -19,10 +28,10 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className={styles.hero} style={{ backgroundImage: "url('/hero-bg.png')" }}>
+      <section className={styles.hero} style={{ backgroundImage: "url('/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg')" }}>
         <div className={styles.heroOverlay}></div>
-        <div className={`container ${styles.heroContent} fade-in`}>
-          <h1 className={styles.heroTitle}>
+        <div className={`${styles.heroContent} fade-in`}>
+          <h1 className={styles.heroTitle} style={{textAlign: 'center'}}>
             Sail Galapagos<br/>with Pride
             <svg style={{display: 'inline-block', width: '0.8em', height: '0.8em', marginLeft: '12px'}} viewBox="0 0 24 24" fill="url(#rainbowGradient)">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -189,53 +198,212 @@ export default function Home() {
       {/* Horizontal Itineraries Section (From Image 2) as requested */}
       <section className={styles.itinerariesSection}>
         <div className="container">
-          <h2 className={styles.aboutContent} style={{fontSize: "2.5rem", color: "var(--primary)", marginBottom: "40px", textAlign: "center"}}>
-            <span style={{color: "#E35E54"}}>4 days</span> across iconic Galapagos islands<br/>(And beyond)
+          <h2 className={styles.aboutContent} style={{fontSize: "2.5rem", color: "var(--primary)", marginBottom: "40px", textAlign: "left"}}>
+            <span style={{color: "#E35E54"}}>4 days of Unforgettable journeys</span> through<br/>Galapagos, Andes & Amazonia
           </h2>
           
-          <div className={styles.itinerariesContainer}>
-            {/* Itinerary 1 - Galapagos (Image Left) */}
-            <div className={styles.itineraryCard}>
-              <div className={styles.itineraryImageContainer}>
-                <img src="https://images.unsplash.com/photo-1582236873133-e57e951478de?auto=format&fit=crop&q=80&w=800" alt="Galapagos" className={styles.itineraryImage} />
-              </div>
-              <div className={styles.itineraryContent}>
-                <div className={styles.itineraryHeader}>
-                  <svg className={styles.itineraryIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <h3 className={styles.itineraryTitle}>GALAPAGOS</h3>
+          <div className={styles.accordionContainer}>
+            {/* Galapagos */}
+            <div className={`${styles.accordionItem} ${activeAccordion === 'galapagos' ? styles.active : ''}`}>
+              {activeAccordion === 'galapagos' ? (
+                <div className={styles.accordionHeaderThin} onClick={() => toggleAccordion('galapagos')}>
+                  <div className={styles.accordionTitleThin}>
+                    <div className={styles.accordionIconThin} style={{backgroundColor: '#00838F'}}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <span style={{color: '#00838F'}}>GALAPAGOS</span>
+                  </div>
+                  <svg className={styles.accordionChevron} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <p className={styles.itineraryDesc}>Sail through living landscapes in a luxury cruise. Encounter rare wildlife, pristine beaches, and volcanic islands like no other.</p>
-                <button className={styles.btnViewItinerary} style={{backgroundColor: '#00838F'}}>VIEW GALAPAGOS ITINERARY</button>
+              ) : (
+                <div className={styles.accordionHeader} onClick={() => toggleAccordion('galapagos')}>
+                  <div className={styles.itineraryImageContainer}>
+                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Galapagos" className={styles.itineraryImage} />
+                  </div>
+                  <div className={styles.itineraryContent} style={{paddingLeft: '15px'}}>
+                    <div className={styles.itineraryHeader}>
+                      <h3 className={styles.itineraryTitle} style={{color: '#00838F'}}>GALAPAGOS</h3>
+                    </div>
+                    <p className={styles.itineraryDesc}>Sail through living landscapes in a luxury cruise. Encounter rare wildlife, pristine beaches, and volcanic islands like no other. Experience the ultimate adventure in one of the most unique ecosystems on the planet, where every day brings a new discovery.</p>
+                    
+                    <svg className={styles.itineraryIconGiant} viewBox="0 0 24 24" fill="none" stroke="#00838F" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    
+                    <button className={styles.btnToggleItinerary} style={{borderColor: '#00838F', color: '#00838F'}}>
+                      VIEW ITINERARY
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              <div className={styles.accordionContent}>
+                <div className={styles.accordionBody}>
+                  <p className={styles.programIntro}>Sail through living landscapes in a luxury cruise. Encounter rare wildlife, pristine beaches, and volcanic islands like no other.</p>
+                  
+                  <div className={styles.dayRow}>
+                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Arrival" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 1</span> San Cristobal</div>
+                      <p className={styles.dayDesc}>Arrival at San Cristobal airport and transfer to the harbour. In the afternoon, visit the Interpretation Centre to learn about the unique archipelago and its fascinating history, then hike to Frigatebird Hill for a panoramic view and to observe magnificent frigatebirds nesting. Enjoy a welcoming dinner aboard.</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.dayRow} ${styles.reverse}`}>
+                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg" alt="Santa Fe" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 2</span> Santa Fe & South Plaza</div>
+                      <p className={styles.dayDesc}>Morning visit to Santa Fe, home to endemic species like the Galapagos hawk and sea lion colonies. Hike through the giant prickly pear cactus forest. Afternoon at South Plaza to observe hybrid land iguanas and swallow-tailed gulls nesting in rugged cliffs. A day full of unique wildlife encounters.</p>
+                    </div>
+                  </div>
+                  <div className={styles.dayRow}>
+                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg" alt="North Seymour" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 3</span> North Seymour & Chinese Hat</div>
+                      <p className={styles.dayDesc}>Explore North Seymour, an important nesting ground for blue-footed boobies and frigate birds. Later, approach the volcanic cone of Chinese Hat to observe Galapagos penguins and pioneer species sprouting on the unique lava fields. Snorkel in crystal-clear waters full of marine life.</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.dayRow} ${styles.reverse}`}>
+                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg" alt="Twin Craters" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 4</span> Twin Craters & Departure</div>
+                      <p className={styles.dayDesc}>Visit the lush scalesia forest of El Chato Tortoise Reserve and the impressive Twin Craters on Santa Cruz Island. See giant tortoises roaming in the wild before transferring to Baltra airport for your departure flight. Farewell to the enchanted islands.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Itinerary 2 - Andes (Image Right -> class reverse) */}
-            <div className={`${styles.itineraryCard} ${styles.reverse}`}>
-              <div className={styles.itineraryImageContainer}>
-                <img src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800" alt="Andes" className={styles.itineraryImage} />
-              </div>
-              <div className={styles.itineraryContent}>
-                <div className={styles.itineraryHeader}>
-                  <svg className={styles.itineraryIcon} viewBox="0 0 24 24" fill="none" stroke="#D17B40" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <h3 className={styles.itineraryTitle} style={{color: '#D17B40'}}>ANDES</h3>
+            {/* Andes */}
+            <div className={`${styles.accordionItem} ${activeAccordion === 'andes' ? styles.active : ''}`}>
+              {activeAccordion === 'andes' ? (
+                <div className={styles.accordionHeaderThin} onClick={() => toggleAccordion('andes')}>
+                  <div className={styles.accordionTitleThin}>
+                    <div className={styles.accordionIconThin} style={{backgroundColor: '#D17B40'}}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <span style={{color: '#D17B40'}}>ANDES</span>
+                  </div>
+                  <svg className={styles.accordionChevron} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <p className={styles.itineraryDesc}>Discover majestic mountains, colonial towns, and vibrant culture. A perfect blend of adventure and tradition.</p>
-                <button className={styles.btnViewItinerary} style={{backgroundColor: '#D17B40'}}>VIEW ANDES ITINERARY</button>
+              ) : (
+                <div className={`${styles.accordionHeader} ${styles.reverse}`} onClick={() => toggleAccordion('andes')}>
+                  <div className={styles.itineraryImageContainer}>
+                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Cotopaxi volcano eruption in Ecuador, South America.jpg" alt="Andes" className={styles.itineraryImage} />
+                  </div>
+                  <div className={styles.itineraryContent} style={{paddingLeft: '15px'}}>
+                    <div className={styles.itineraryHeader}>
+                      <h3 className={styles.itineraryTitle} style={{color: '#D17B40'}}>ANDES</h3>
+                    </div>
+                    <p className={styles.itineraryDesc}>Discover majestic mountains, colonial towns, and vibrant culture. A perfect blend of adventure and tradition. Immerse yourself in the rich history and breathtaking landscapes of the Ecuadorian highlands.</p>
+                    
+                    <svg className={styles.itineraryIconGiant} viewBox="0 0 24 24" fill="none" stroke="#D17B40" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    
+                    <button className={styles.btnToggleItinerary} style={{borderColor: '#D17B40', color: '#D17B40'}}>
+                      VIEW ITINERARY
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              <div className={styles.accordionContent}>
+                <div className={styles.accordionBody}>
+                  <p className={styles.programIntro}>Discover majestic mountains, colonial towns, and vibrant culture. A perfect blend of adventure and tradition with private transportation and personalized service.</p>
+                  
+                  <div className={styles.dayRow}>
+                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Basilica.jpg" alt="Quito" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 1</span> Colonial Quito & Middle of the World</div>
+                      <p className={styles.dayDesc}>A full-day exploration of Ecuador's capital. Visit Quito's beautifully preserved Historic Center with its colonial churches, then stand on the Equator at the Middle of the World Monument. Enjoy stunning views of the city from the Teleferico and immerse in local history.</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.dayRow} ${styles.reverse}`}>
+                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Cotopaxi volcano eruption in Ecuador, South America.jpg" alt="Cotopaxi" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 2</span> Cotopaxi & Historic Hacienda</div>
+                      <p className={styles.dayDesc}>Enjoy a scenic drive to Cotopaxi National Park. Explore the Limpiopungo Lagoon observing wild horses and unique páramo vegetation, before relaxing at a traditional Andean hacienda surrounded by breathtaking mountain views. A truly spectacular alpine experience.</p>
+                    </div>
+                  </div>
+                  <div className={styles.dayRow}>
+                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Carretera vista al Cotopaxi.jpg" alt="Horseback Riding" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 3</span> Andes Horseback Riding & Drag Show</div>
+                      <p className={styles.dayDesc}>A memorable horseback riding experience through the beautiful highlands. Return to Quito in the evening to experience vibrant LGBTQ+ nightlife with a lively local drag show that celebrates diversity and inclusion in the capital.</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.dayRow} ${styles.reverse}`}>
+                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Papallacta.jpg" alt="Papallacta" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 4</span> Papallacta Hot Springs</div>
+                      <p className={styles.dayDesc}>Travel east across the Andes to relax in the famous natural thermal pools of Papallacta, surrounded by spectacular mountain scenery and fresh air. A perfect, rejuvenating end to your Andean adventure before returning home.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Itinerary 3 - Amazonia (Image Left) */}
-            <div className={styles.itineraryCard}>
-              <div className={styles.itineraryImageContainer}>
-                <img src="https://images.unsplash.com/photo-1590425624773-cbcf582de802?auto=format&fit=crop&q=80&w=800" alt="Amazonia" className={styles.itineraryImage} />
-              </div>
-              <div className={styles.itineraryContent}>
-                <div className={styles.itineraryHeader}>
-                  <svg className={styles.itineraryIcon} viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <h3 className={styles.itineraryTitle} style={{color: '#4CAF50'}}>AMAZONIA</h3>
+            {/* Amazonia */}
+            <div className={`${styles.accordionItem} ${activeAccordion === 'amazonia' ? styles.active : ''}`}>
+              {activeAccordion === 'amazonia' ? (
+                <div className={styles.accordionHeaderThin} onClick={() => toggleAccordion('amazonia')}>
+                  <div className={styles.accordionTitleThin}>
+                    <div className={styles.accordionIconThin} style={{backgroundColor: '#4CAF50'}}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <span style={{color: '#4CAF50'}}>AMAZONIA</span>
+                  </div>
+                  <svg className={styles.accordionChevron} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <p className={styles.itineraryDesc}>Dive into the Amazon rainforest. Cruise rivers, spot exotic wildlife, and connect with rich plant life and local communities.</p>
-                <button className={styles.btnViewItinerary} style={{backgroundColor: '#4CAF50'}}>VIEW AMAZONIA ITINERARY</button>
+              ) : (
+                <div className={styles.accordionHeader} onClick={() => toggleAccordion('amazonia')}>
+                  <div className={styles.itineraryImageContainer}>
+                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC08527.jpg" alt="Amazonia" className={styles.itineraryImage} />
+                  </div>
+                  <div className={styles.itineraryContent} style={{paddingLeft: '15px'}}>
+                    <div className={styles.itineraryHeader}>
+                      <h3 className={styles.itineraryTitle} style={{color: '#4CAF50'}}>AMAZONIA</h3>
+                    </div>
+                    <p className={styles.itineraryDesc}>Dive into the Amazon rainforest. Cruise rivers, spot exotic wildlife, and connect with rich plant life and local communities. Wake up to the sounds of the jungle and explore one of the most biodiverse regions on Earth.</p>
+                    
+                    <svg className={styles.itineraryIconGiant} viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    
+                    <button className={styles.btnToggleItinerary} style={{borderColor: '#4CAF50', color: '#4CAF50'}}>
+                      VIEW ITINERARY
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              <div className={styles.accordionContent}>
+                <div className={styles.accordionBody}>
+                  <p className={styles.programIntro}>Experience the Lower Cuyabeno aboard traditional dugout canoes, exploring pristine blackwater forests, spotting diverse wildlife, and witnessing the rainforest waking up at dawn.</p>
+                  
+                  <div className={styles.dayRow}>
+                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC08527.jpg" alt="Rainforest Journey" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 1</span> Journey to the Rainforest</div>
+                      <p className={styles.dayDesc}>Arrive at Cuyabeno Bridge and embark on a motorized canoe journey down the narrow river to your lodge, amazed by the incredible flora and fauna along the way. Settle in and enjoy the peaceful sounds of the rainforest as night falls.</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.dayRow} ${styles.reverse}`}>
+                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC_0051.jpg" alt="Laguna Grande" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 2</span> Laguna Grande Exploration</div>
+                      <p className={styles.dayDesc}>Journey to Laguna Grande, a scenic blackwater lake, followed by a guided hike along the Palma Roja Trail to spot monkeys, toucans, and macaws. Complete the day with a thrilling night walk to see nocturnal creatures in their natural habitat.</p>
+                    </div>
+                  </div>
+                  <div className={styles.dayRow}>
+                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC_0121.jpg" alt="Amazon Expedition" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 3</span> Dawn to Sunset Adventure</div>
+                      <p className={styles.dayDesc}>Early morning expedition through the flooded forest to witness the sunrise and active wildlife. Afternoon canoe journey to La Bocana, where you may spot playful pink river dolphins and exotic birds soaring overhead.</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.dayRow} ${styles.reverse}`}>
+                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC_0001.jpg" alt="Departure" className={styles.dayImage} />
+                    <div className={styles.dayInfo}>
+                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 4</span> Goodbye Amazon</div>
+                      <p className={styles.dayDesc}>Enjoy a final breakfast at the lodge before journeying back up the river by motorized canoe, taking in the last sights and sounds of the Amazon, to meet your transportation for the return trip to Quito with unforgettable memories.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
