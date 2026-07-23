@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import styles from "./ItineraryCovers.module.css"; // Reuse the GTA style covers CSS
 import ItineraryExplorer from "./ItineraryExplorer";
 
@@ -37,7 +38,7 @@ export default function ComplementaryTours() {
               className={styles.coverCard} 
               onClick={() => setActiveItinerary(cover.id)}
             >
-              <img src={cover.image} alt={cover.title} className={styles.coverImage} />
+              <Image src={cover.image} alt={cover.title} className={styles.coverImage} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 50vw" />
               <div className={styles.coverOverlay}></div>
               <div className={styles.coverContent}>
                 <h3 className={styles.coverTitle}>{cover.title}</h3>

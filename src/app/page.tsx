@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import styles from "./page.module.css";
 import ItineraryCovers from "./components/ItineraryCovers";
 import GalapagosScroll from "./components/GalapagosScroll";
@@ -146,9 +147,10 @@ export default function Home() {
       <section className={styles.hero} data-parallax-container>
         <div 
           className={styles.heroBgParallax}
-          style={{ backgroundImage: "url('/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg')" }}
           data-parallax-speed="0.15"
-        ></div>
+        >
+          <Image src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Galapagos Cruise" fill style={{ objectFit: 'cover' }} priority />
+        </div>
         <div className={styles.heroOverlay}></div>
         
         <div className={styles.heroContent} data-parallax-speed="-0.1">
@@ -162,7 +164,7 @@ export default function Home() {
         </div>
 
         {/* Rainbow Curve */}
-        <div className={styles.heroCurve} ref={curveRef}>
+        <div className={styles.heroCurve} ref={curveRef} style={{ transform: 'scaleY(0.1)', transformOrigin: 'bottom center' }}>
           <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style={{ width: '200%' }}>
             <defs>
               <linearGradient id="rainbowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -220,9 +222,11 @@ export default function Home() {
       <section className={styles.shipSection} data-parallax-container style={{ position: 'relative', zIndex: 10, minHeight: '750px', display: 'flex', alignItems: 'center', padding: '100px 0', overflow: 'hidden' }}>
         <div 
           className={styles.heroBgParallax}
-          style={{ backgroundImage: "url('/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Shaded_deck_3.jpg')", top: '-15%' }}
+          style={{ top: '-15%' }}
           data-parallax-speed="0.1"
-        ></div>
+        >
+          <Image src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Shaded_deck_3.jpg" alt="Deck" fill style={{ objectFit: 'cover' }} />
+        </div>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 1 }}></div>
 
         <div className={`container ${styles.shipGrid}`} style={{ position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '80px' }}>
@@ -248,7 +252,7 @@ export default function Home() {
               style={{ width: '55%', height: '220px', bottom: '-225px', left: '30%', right: 'auto', cursor: 'pointer' }}
               onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg", "Sitting Area")}
               data-parallax-speed="-0.22" data-parallax-stagger="0">
-              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg" alt="Sitting Area" /></div>
+              <div className={styles.shipImgWrapper}><Image src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg" alt="Sitting Area" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 33vw" /></div>
               <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ZoomIn size={18} color="white" />
               </div>
@@ -259,7 +263,7 @@ export default function Home() {
               style={{ bottom: '10px', left: '5%', width: '52%', height: '230px', zIndex: 2, transform: 'rotate(-4deg)', cursor: 'pointer' }}
               onClick={() => openLightbox("/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg", "LGBT Couple")}
               data-parallax-speed="-0.16" data-parallax-stagger="5">
-              <div className={styles.shipImgWrapper}><img src="/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg" alt="LGBT Couple" /></div>
+              <div className={styles.shipImgWrapper}><Image src="/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg" alt="LGBT Couple" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 33vw" /></div>
               <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ZoomIn size={18} color="white" />
               </div>
@@ -270,7 +274,7 @@ export default function Home() {
               style={{ top: '-10%', right: '10%', left: 'auto', width: '65%', height: '280px', zIndex: 1, transform: 'rotate(3deg)', cursor: 'pointer' }}
               onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg", "Cruise View")}
               data-parallax-speed="-0.1" data-parallax-stagger="10">
-              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Cruise View" /></div>
+              <div className={styles.shipImgWrapper}><Image src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Cruise View" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 33vw" /></div>
               <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ZoomIn size={18} color="white" />
               </div>
@@ -283,9 +287,11 @@ export default function Home() {
       <section className={styles.aboutSection} data-parallax-container style={{ backgroundColor: 'var(--light-bg)', position: 'relative', zIndex: 10, overflow: 'hidden', padding: '120px 0', minHeight: '750px' }}>
         <div 
           className={styles.heroBgParallax}
-          style={{ backgroundImage: "url('/LGBT/Caucasian men friend drinking champagne while having party in yacht. Attractive handsome male tourist hanging out celebrate holiday vacation trip while catamaran boat sailing during summer sunset..jpg')", top: '0%', backgroundPosition: '100% 30%', backgroundSize: 'auto 100%' }}
+          style={{ top: '0%' }}
           data-parallax-speed="0.08"
-        ></div>
+        >
+          <Image src="/LGBT/Caucasian men friend drinking champagne while having party in yacht. Attractive handsome male tourist hanging out celebrate holiday vacation trip while catamaran boat sailing during summer sunset..jpg" alt="Party" fill style={{ objectFit: 'cover', objectPosition: '100% 30%' }} />
+        </div>
         {/* Gradient exactly as before — white on left fading to transparent on right */}
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.98) 30%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 65%)', zIndex: 1 }}></div>
 
@@ -297,7 +303,7 @@ export default function Home() {
               style={{ background: '#00838F', width: '55%', height: '220px', bottom: '-210px', left: '10%', right: 'auto', transform: 'rotate(-2deg)', cursor: 'pointer' }}
               onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg", "Dining")}
               data-parallax-speed="-0.22" data-parallax-stagger="0">
-              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg" alt="Dining" /></div>
+              <div className={styles.shipImgWrapper}><Image src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg" alt="Dining" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 33vw" /></div>
               <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ZoomIn size={18} color="white" />
               </div>
@@ -307,7 +313,7 @@ export default function Home() {
               style={{ background: '#00838F', bottom: '10px', left: '45%', width: '52%', height: '230px', zIndex: 2, transform: 'rotate(4deg)', cursor: 'pointer' }}
               onClick={() => openLightbox("/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg", "LGBT Couple")}
               data-parallax-speed="-0.16" data-parallax-stagger="5">
-              <div className={styles.shipImgWrapper}><img src="/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg" alt="LGBT Couple" /></div>
+              <div className={styles.shipImgWrapper}><Image src="/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg" alt="LGBT Couple" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 33vw" /></div>
               <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ZoomIn size={18} color="white" />
               </div>
@@ -317,7 +323,7 @@ export default function Home() {
               style={{ background: '#00838F', top: '-9%', left: '10%', right: 'auto', width: '65%', height: '280px', zIndex: 1, transform: 'rotate(-3deg)', cursor: 'pointer' }}
               onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg", "Sun Deck")}
               data-parallax-speed="-0.1" data-parallax-stagger="10">
-              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg" alt="Sun Deck" /></div>
+              <div className={styles.shipImgWrapper}><Image src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg" alt="Sun Deck" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 33vw" /></div>
               <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ZoomIn size={18} color="white" />
               </div>

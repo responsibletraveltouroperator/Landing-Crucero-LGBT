@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import { Ship, Car, Tent, MapPin } from "lucide-react";
@@ -146,7 +147,7 @@ export default function ItineraryExplorer({ initialTab }: Props) {
                     className={`${styles.collageItem} ${styles[`collagePos${i + 1}`]}`}
                     onClick={() => openLightbox(day.img, day.title)}
                   >
-                    <img src={day.img} alt={day.title} />
+                    <Image src={day.img} alt={day.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 50vw" />
                     <div className={styles.hoverOverlay}><span>Ver pantalla completa</span></div>
                   </div>
                 ))}

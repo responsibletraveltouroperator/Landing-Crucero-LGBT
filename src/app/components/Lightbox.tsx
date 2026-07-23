@@ -1,5 +1,6 @@
 "use client";
 import { X } from "lucide-react";
+import Image from "next/image";
 import { useEffect } from "react";
 import styles from "./Lightbox.module.css";
 
@@ -30,7 +31,7 @@ export default function Lightbox({ isOpen, imageSrc, imageAlt, onClose }: Lightb
         <X size={32} color="white" />
       </button>
       <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
-        <img src={imageSrc} alt={imageAlt} className={styles.lightboxImage} />
+        {imageSrc && <Image src={imageSrc} alt={imageAlt} fill style={{ objectFit: 'contain' }} className={styles.lightboxImage} sizes="100vw" />}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import MotionPathPlugin from "gsap/dist/MotionPathPlugin";
@@ -146,10 +147,9 @@ export default function GalapagosScroll() {
           {/* Day Screens (100vw each) */}
           {GALAPAGOS_DAYS.map((day, index) => (
             <div key={index} className={styles.slideScreen}>
-              <div 
-                className={styles.slideBg} 
-                style={{ backgroundImage: `url('${day.bgImg}')` }}
-              ></div>
+              <div className={styles.slideBg}>
+                <Image src={day.bgImg} alt="Background" fill style={{ objectFit: 'cover' }} priority={index === 0} />
+              </div>
               <div className={styles.slideOverlay}></div>
               
               <div className={styles.slideContent}>
@@ -159,14 +159,14 @@ export default function GalapagosScroll() {
                     className={`${styles.collageItem} ${styles.collagePos1}`}
                     onClick={() => openLightbox(day.animalImg, day.title + " Wildlife")}
                   >
-                    <img src={day.animalImg} alt={day.title + " Wildlife"} />
+                    <Image src={day.animalImg} alt={day.title + " Wildlife"} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 50vw" />
                     <div className={styles.hoverOverlay}><span>Enlarge</span></div>
                   </div>
                   <div 
                     className={`${styles.collageItem} ${styles.collagePos2}`}
                     onClick={() => openLightbox(day.cruiseImg, "Cruise View")}
                   >
-                    <img src={day.cruiseImg} alt="Cruise View" />
+                    <Image src={day.cruiseImg} alt="Cruise View" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 50vw" />
                     <div className={styles.hoverOverlay}><span>Enlarge</span></div>
                   </div>
                 </div>
