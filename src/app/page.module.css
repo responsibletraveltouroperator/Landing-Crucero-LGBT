@@ -43,17 +43,26 @@
 
 /* Hero Section */
 .hero {
+  height: 115vh;
+  min-height: 600px;
   position: relative;
-  height: 90vh;
-  min-height: 700px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 10%;
-  background-size: cover;
-  background-position: center;
   color: white;
   overflow: hidden;
+}
+
+.heroBgParallax, .shipBgParallax {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+  z-index: 0;
 }
 
 .heroOverlay {
@@ -62,20 +71,20 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, rgba(16, 28, 43, 0.8) 0%, rgba(16, 28, 43, 0.4) 50%, rgba(16, 28, 43, 0) 100%);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 40%);
   z-index: 1;
 }
 
 .heroContent {
   position: relative;
   z-index: 2;
-  max-width: 600px;
-  margin-top: -50px;
-  margin-left: 0;
+  max-width: 900px;
+  margin-top: -160px;
   text-align: left;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding-left: 4%;
 }
 
 .heroTitle {
@@ -83,6 +92,13 @@
   line-height: 1.1;
   margin-bottom: 20px;
   font-family: var(--font-heading);
+  text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.prideText {
+  color: var(--secondary);
+  font-weight: 700;
+  display: inline-block;
 }
 
 .heroSubtitle {
@@ -137,7 +153,7 @@
   color: var(--primary);
 }
 
-/* Specific Hero Curved Divider from Image 1 */
+/* Specific Hero Curved Divider */
 .heroCurve {
   position: absolute;
   bottom: -1px;
@@ -150,13 +166,14 @@
 .heroCurve svg {
   display: block;
   width: 100%;
-  height: 200px; /* Aumentado a 200px para la ola multicapa */
+  height: auto;
+  min-height: 0;
 }
 
 /* Stat Bar */
 .statBar {
-  background-color: white; /* Changed to pure white to match the wave */
-  padding: 40px 0;
+  background-color: white; 
+  padding: 60px 0;
   position: relative;
   z-index: 3;
 }
@@ -173,6 +190,24 @@
   display: flex;
   align-items: center;
   gap: 15px;
+  min-width: 150px;
+}
+
+.statItem h4 {
+  font-size: 3rem;
+  color: var(--primary);
+  font-family: var(--font-heading);
+  line-height: 1;
+  margin: 0;
+}
+
+.statItem p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
 }
 
 .statIcon {
@@ -307,17 +342,68 @@
   color: #4DB6AC; /* Teal icon color from design */
 }
 
-.shipImagesSmall {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.shipDynamicImages {
+  position: relative;
+  height: 500px;
+  width: 100%;
 }
 
-.shipImageSmall {
+.shipImgCard {
+  position: absolute;
+  border-radius: 12px;
+  background: white;
+  padding: 10px;
+  padding-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.shipImgCard:hover {
+  z-index: 10 !important;
+}
+
+.shipImgWrapper {
   width: 100%;
-  height: 190px;
-  border-radius: var(--border-radius);
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.shipImgWrapper img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.shipImgCard:hover .shipImgWrapper img {
+  transform: scale(1.1);
+}
+
+.shipImgMain {
+  top: 0;
+  right: 0;
+  width: 65%;
+  height: 280px;
+  z-index: 1;
+  transform: rotate(3deg);
+}
+
+.shipImgOverlap1 {
+  bottom: 10px;
+  left: 0;
+  width: 52%;
+  height: 230px;
+  z-index: 2;
+  transform: rotate(-4deg);
+}
+
+.shipImgOverlap2 {
+  bottom: -20px;
+  right: 10px;
+  width: 42%;
+  height: 185px;
+  z-index: 3;
+  transform: rotate(2deg);
 }
 
 /* Wildlife & Welcoming Section */
@@ -548,6 +634,88 @@
   background-color: #d14a40;
 }
 
+/* About Parallax Section */
+.aboutSection {
+  padding: 100px 0;
+  overflow: hidden;
+}
+.aboutGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+.aboutContent {
+  padding-right: 30px;
+}
+.aboutImages {
+  position: relative;
+  height: 500px;
+}
+.imageGrid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.imgLarge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+.imgSmall {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  border: 10px solid white;
+}
+
+/* Ship Parallax Section */
+.shipSection {
+  position: relative;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  color: white;
+  overflow: hidden;
+}
+.shipOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1;
+}
+.shipContent {
+  position: relative;
+  z-index: 2;
+}
+.shipTextBox {
+  max-width: 500px;
+}
+.shipTextBox p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+.shipFeatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  font-weight: 600;
+}
+
 /* Footer */
 .footer {
   background-color: var(--primary);
@@ -672,8 +840,12 @@
   .heroTitle { font-size: 3.5rem; }
   .statGrid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
   .aboutGrid, .shipGrid, .wildlifeGrid, .bookingGrid { grid-template-columns: 1fr; }
-  .shipImagesSmall { flex-direction: row; }
-  .shipImagesSmall img { height: 150px; }
+  
+  .shipDynamicImages { height: 350px; margin-top: 30px; }
+  .shipImgMain { width: 85%; height: 250px; }
+  .shipImgOverlap1 { width: 65%; height: 180px; bottom: 20px; }
+  .shipImgOverlap2 { width: 50%; height: 140px; right: 10px; }
+  
   .welcomingBox { flex-direction: column; }
   .welcomingContent, .welcomingImage { width: 100%; }
   .welcomingImage { height: 250px; }

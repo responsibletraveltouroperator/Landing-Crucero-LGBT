@@ -1,14 +1,131 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
-import Link from "next/link";
+import ItineraryCovers from "./components/ItineraryCovers";
+import GalapagosScroll from "./components/GalapagosScroll";
+import ComplementaryTours from "./components/ComplementaryTours";
+import Lightbox from "./components/Lightbox";
+import { ZoomIn, Users, Ship, Compass, Heart } from "lucide-react";
+import AnimatedCounter from "./components/AnimatedCounter";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
+
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useEffect : useEffect;
 
 export default function Home() {
-  const [activeAccordion, setActiveAccordion] = useState<string | null>("galapagos");
+  const curveRef = useRef<HTMLDivElement>(null);
+  const [lightboxState, setLightboxState] = useState({ isOpen: false, src: "", alt: "" });
 
-  const toggleAccordion = (id: string) => {
-    setActiveAccordion(activeAccordion === id ? null : id);
+  const openLightbox = (src: string, alt: string) => {
+    setLightboxState({ isOpen: true, src, alt });
   };
+
+  useIsomorphicLayoutEffect(() => {
+    if (typeof window !== "undefined") {
+      gsap.registerPlugin(ScrollTrigger);
+
+      let ctx = gsap.context(() => {
+        // Per-container staggered parallax
+        // Each section resets the stagger index so images rise one by one within their own section
+        const containers = document.querySelectorAll('[data-parallax-container]');
+        containers.forEach((container) => {
+          let sectionNegativeIdx = 0;
+          const els = container.querySelectorAll('[data-parallax-speed]');
+          els.forEach((el: any) => {
+            const speed = parseFloat(el.getAttribute('data-parallax-speed') || '0.1');
+            const absSpeed = Math.abs(speed);
+            // Use explicit stagger attribute if provided, otherwise auto-increment
+            const explicitStagger = el.getAttribute('data-parallax-stagger');
+            
+            if (speed < 0) {
+              const staggerPct = explicitStagger !== null 
+                ? parseFloat(explicitStagger)
+                : sectionNegativeIdx * 6;
+              sectionNegativeIdx++;
+              gsap.fromTo(el,
+                { y: () => window.innerHeight * absSpeed * 0.3 },
+                {
+                  y: () => -window.innerHeight * absSpeed * 1.6,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: container,
+                    start: `top+=${staggerPct}% 90%`,
+                    end: "bottom top",
+                    scrub: 2,
+                    invalidateOnRefresh: true,
+                  }
+                }
+              );
+            } else {
+              gsap.fromTo(el,
+                { y: () => -window.innerHeight * absSpeed * 0.4 },
+                {
+                  y: () => window.innerHeight * absSpeed * 0.4,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: container,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: 1.5,
+                    invalidateOnRefresh: true,
+                  }
+                }
+              );
+            }
+          });
+        });
+
+        // Wave animation
+        if (curveRef.current) {
+          const svg = curveRef.current.querySelector('svg');
+          if (svg) {
+            gsap.to(svg, {
+              xPercent: -50,
+              ease: "none",
+              scrollTrigger: {
+                trigger: `.${styles.hero}`,
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+              }
+            });
+          }
+          
+          gsap.set(curveRef.current, { transformOrigin: "bottom center", scaleY: 0.1 });
+          gsap.to(curveRef.current, {
+            scaleY: 4,
+            ease: "power1.in",
+            scrollTrigger: {
+              trigger: `.${styles.hero}`,
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            }
+          });
+        }
+        
+        // Foam animation
+        if (curveRef.current) {
+          const foamPaths = curveRef.current.querySelectorAll('.foam-wave');
+          if (foamPaths.length > 0) {
+            gsap.to(foamPaths, {
+              x: "-80px",
+              ease: "none",
+              scrollTrigger: {
+                trigger: `.${styles.hero}`,
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+              }
+            });
+          }
+        }
+
+      });
+
+      return () => ctx.revert();
+    }
+  }, []);
 
   return (
     <main>
@@ -21,448 +138,214 @@ export default function Home() {
           <a href="#">The Cruise</a>
           <a href="#">Itinerary</a>
           <a href="#">Experience</a>
-          <a href="#">About Us</a>
-          <a href="#">FAQ</a>
         </div>
-        <button className={styles.btnPrimary} style={{backgroundColor: '#E35E54'}}>REQUEST YOUR CABIN</button>
+        <button className={styles.btnPrimary} style={{backgroundColor: '#E35E54'}}>REQUEST CABIN</button>
       </nav>
 
       {/* Hero Section */}
-      <section className={styles.hero} style={{ backgroundImage: "url('/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg')" }}>
+      <section className={styles.hero} data-parallax-container>
+        <div 
+          className={styles.heroBgParallax}
+          style={{ backgroundImage: "url('/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg')" }}
+          data-parallax-speed="0.15"
+        ></div>
         <div className={styles.heroOverlay}></div>
-        <div className={`${styles.heroContent} fade-in`}>
-          <h1 className={styles.heroTitle} style={{textAlign: 'center'}}>
-            Sail Galapagos<br/>with Pride
-            <svg style={{display: 'inline-block', width: '0.8em', height: '0.8em', marginLeft: '12px'}} viewBox="0 0 24 24" fill="url(#rainbowGradient)">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
+        
+        <div className={styles.heroContent} data-parallax-speed="-0.1">
+          <h1 className={styles.heroTitle}>
+            Sail Galapagos<br/>with <span className={styles.prideText}>Pride</span>
           </h1>
           <p className={styles.heroSubtitle}>
             An intimate LGBT+ cruise through the Galapagos Islands, where nature, freedom and connection come together at sea.
           </p>
-          <div className={styles.heroButtons}>
-            <button className={styles.btnPrimary} style={{backgroundColor: '#E35E54'}}>REQUEST YOUR CABIN</button>
-            <button className={styles.btnOutline}>VIEW ITINERARY</button>
-          </div>
+
         </div>
-        
-        {/* Curvature exactly replicating the original Image 1 */}
-        <div className={styles.heroCurve}>
-          <svg viewBox="0 0 1440 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Teal Swoop (Left) */}
-            <path d="M 0,40 C 150,80 300,140 450,200 L 0,200 Z" fill="#00BCD4" />
-            
-            {/* Rainbow Swoops (Right) - 5 separate overlapping colored bands */}
-            <path d="M 700,200 C 900,150 1100,60 1440,40 L 1440,200 L 700,200 Z" fill="#F44336" />
-            <path d="M 730,200 C 920,160 1110,75 1440,60 L 1440,200 L 730,200 Z" fill="#FF9800" />
-            <path d="M 760,200 C 940,170 1120,90 1440,80 L 1440,200 L 760,200 Z" fill="#FFEB3B" />
-            <path d="M 790,200 C 960,180 1130,105 1440,100 L 1440,200 L 790,200 Z" fill="#4CAF50" />
-            <path d="M 820,200 C 980,190 1140,120 1440,120 L 1440,200 L 820,200 Z" fill="#2196F3" />
-            
-            {/* White Background Curve (Front) */}
-            <path d="M 0,100 C 300,220 700,220 1100,140 C 1250,110 1350,120 1440,140 L 1440,200 L 0,200 Z" fill="white" />
+
+        {/* Rainbow Curve */}
+        <div className={styles.heroCurve} ref={curveRef}>
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style={{ width: '200%' }}>
+            <defs>
+              <linearGradient id="rainbowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FF0018"/>
+                <stop offset="16.6%" stopColor="#FFA52C"/>
+                <stop offset="33.3%" stopColor="#FFFF41"/>
+                <stop offset="50%" stopColor="#008018"/>
+                <stop offset="66.6%" stopColor="#0000F9"/>
+                <stop offset="83.3%" stopColor="#86007D"/>
+              </linearGradient>
+            </defs>
+            {/* Foam 1 */}
+            <path className="foam-wave" fill="rgba(255,255,255,0.7)" d="M0,224L48,229.3C96,235,192,245,288,213.3C384,181,480,107,576,96C672,85,768,139,864,170.7C960,203,1056,213,1152,192C1248,171,1344,117,1392,90.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" transform="translate(15, -15)"></path>
+            {/* White 1 */}
+            <path fill="var(--light-bg)" d="M0,224L48,229.3C96,235,192,245,288,213.3C384,181,480,107,576,96C672,85,768,139,864,170.7C960,203,1056,213,1152,192C1248,171,1344,117,1392,90.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            {/* Rainbow 1 */}
+            <path fill="url(#rainbowGradient)" opacity="0.5" d="M-200,256L-152,245.3C-104,235,-8,213,88,181.3C184,149,280,107,376,106.7C472,107,568,149,664,181.3C760,213,856,235,952,229.3C1048,224,1144,192,1192,176L1240,160L1240,320L1192,320C1144,320,1048,320,952,320C856,320,760,320,664,320C568,320,472,320,376,320C280,320,184,320,88,320L-200,320Z"></path>
+            {/* Foam 2 */}
+            <path className="foam-wave" fill="rgba(255,255,255,0.7)" d="M1440,224L1488,229.3C1536,235,1632,245,1728,213.3C1824,181,1920,107,2016,96C2112,85,2208,139,2304,170.7C2400,203,2496,213,2592,192C2688,171,2784,117,2832,90.7L2880,64L2880,320L2832,320C2784,320,2688,320,2592,320C2496,320,2400,320,2304,320C2208,320,2112,320,2016,320C1920,320,1824,320,1728,320C1632,320,1536,320,1488,320L1440,320Z" transform="translate(15, -15)"></path>
+            {/* White 2 */}
+            <path fill="var(--light-bg)" d="M1440,224L1488,229.3C1536,235,1632,245,1728,213.3C1824,181,1920,107,2016,96C2112,85,2208,139,2304,170.7C2400,203,2496,213,2592,192C2688,171,2784,117,2832,90.7L2880,64L2880,320L2832,320C2784,320,2688,320,2592,320C2496,320,2400,320,2304,320C2208,320,2112,320,2016,320C1920,320,1824,320,1728,320C1632,320,1536,320,1488,320L1440,320Z"></path>
+            {/* Rainbow 2 */}
+            <path fill="url(#rainbowGradient)" opacity="0.5" d="M1240,256L1288,245.3C1336,235,1432,213,1528,181.3C1624,149,1720,107,1816,106.7C1912,107,2008,149,2104,181.3C2200,213,2296,235,2392,229.3C2488,224,2584,192,2632,176L2680,160L2680,320L2632,320C2584,320,2488,320,2392,320C2296,320,2200,320,2104,320C2008,320,1912,320,1816,320C1720,320,1624,320,1528,320C1432,320,1336,320,1288,320L1240,320Z"></path>
           </svg>
         </div>
       </section>
 
       {/* Stats Bar */}
-      <section className={styles.statBar}>
+      <section className={styles.statBar} style={{ position: 'relative', zIndex: 10 }}>
         <div className={`container ${styles.statGrid}`}>
-          {/* Duration: Coral */}
           <div className={styles.statItem}>
-            <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#E35E54" strokeWidth="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </div>
-            <div className={styles.statTextContainer}>
-              <div className={styles.statTitle}>4 Days / 3 Nights</div>
-              <div className={styles.statDesc}>Unforgettable journey</div>
-            </div>
+            <Users className={styles.statIcon} />
+            <h4><AnimatedCounter end={16} /></h4>
+            <p>Exclusive<br/>Guests</p>
           </div>
-          {/* Ship: Turquoise */}
           <div className={styles.statItem}>
-            <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#00BCD4" strokeWidth="1.5"><path d="M22 21.05V15a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v6.05"/><path d="M4 13L2.5 5.5A2 2 0 0 1 4.5 3h15a2 2 0 0 1 2 2.5L20 13"/><path d="M2 21h20"/></svg>
-            </div>
-            <div className={styles.statTextContainer}>
-              <div className={styles.statTitle}>ARCHIPEL I</div>
-              <div className={styles.statDesc}>Intimate & Comfortable</div>
-            </div>
+            <Ship className={styles.statIcon} />
+            <h4><AnimatedCounter end={8} /></h4>
+            <p>Spacious<br/>Cabins</p>
           </div>
-          {/* Group: Blue/Purple */}
           <div className={styles.statItem}>
-            <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#5E35B1" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <div className={styles.statTextContainer}>
-              <div className={styles.statTitle}>SMALL GROUP</div>
-              <div className={styles.statDesc}>Max 16 Guests</div>
-            </div>
+            <Compass className={styles.statIcon} />
+            <h4><AnimatedCounter end={2} /></h4>
+            <p>Expert<br/>Guides</p>
           </div>
-          {/* LGBT+ Friendly: Rainbow Heart */}
           <div className={styles.statItem}>
-            <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="url(#thinRainbowGradient)" stroke="none" strokeWidth="0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </div>
-            <div className={styles.statTextContainer}>
-              <div className={styles.statTitle}>LGBT+ FRIENDLY</div>
-              <div className={styles.statDesc}>Inclusive & Welcoming</div>
-            </div>
+            <Heart className={styles.statIcon} />
+            <h4><AnimatedCounter end={100} suffix="%" /></h4>
+            <p>LGBT+<br/>Experience</p>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className={styles.aboutSection}>
-        <div className={`container ${styles.aboutGrid}`}>
-          <div className={styles.aboutContent}>
-            <h2>A journey where you<br/>can be fully yourself</h2>
-            <p style={{borderTop: "2px solid #E35E54", paddingTop: "20px", display: "inline-block", marginTop: "10px"}}>
-              This is more than a cruise. It&apos;s a space to explore Galapagos with freedom, respect and joy. Meaningful travels, genuine connections and unforgettable moments—always with pride.
-            </p>
-            <div className={styles.aboutFeatures} style={{marginTop: "20px"}}>
-              <div>
-                <div className={styles.featureIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#E35E54" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </div>
-                <div className={styles.featureText} style={{color: '#E35E54'}}>Feel<br/>Welcomed</div>
-              </div>
-              <div>
-                <div className={styles.featureIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#4DB6AC" strokeWidth="1.5"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-                </div>
-                <div className={styles.featureText} style={{color: '#4DB6AC'}}>Connect<br/>with nature</div>
-              </div>
-              <div>
-                <div className={styles.featureIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#9C27B0" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </div>
-                <div className={styles.featureText} style={{color: '#9C27B0'}}>Share<br/>the Journey</div>
-              </div>
-              <div>
-                <div className={styles.featureIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#FF9800" strokeWidth="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                </div>
-                <div className={styles.featureText} style={{color: '#FF9800'}}>Travel<br/>with pride</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <img src="https://images.unsplash.com/photo-1516685304081-de7947d419d5?auto=format&fit=crop&q=80&w=800" alt="Couple enjoying the cruise" className={styles.aboutImage} />
-          </div>
-        </div>
-      </section>
+      {/* The Ship Section - First Content Block */}
+      <section className={styles.shipSection} data-parallax-container style={{ position: 'relative', zIndex: 10, minHeight: '750px', display: 'flex', alignItems: 'center', padding: '100px 0', overflow: 'hidden' }}>
+        <div 
+          className={styles.heroBgParallax}
+          style={{ backgroundImage: "url('/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Shaded_deck_3.jpg')", top: '-15%' }}
+          data-parallax-speed="0.1"
+        ></div>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 1 }}></div>
 
-      {/* Your Home At Sea: Archipel I */}
-      <section className={styles.shipSection}>
-        <div className={`container ${styles.shipGrid}`}>
-          <img src="https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&q=80&w=800" alt="Galapagos Sea Turtle" className={styles.shipImageBig} />
-          
+        <div className={`container ${styles.shipGrid}`} style={{ position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '80px' }}>
           <div className={styles.shipContent}>
-            <h2>Your home at sea: Archipel I</h2>
-            <p>A refined motorized catamaran designed for small-group exploration, with spacious social areas, cozy cabins and large decks to enjoy the beauty of Galapagos from sunrise to sunset.</p>
-            <div className={styles.shipFeatures}>
-              <div className={styles.shipFeatureItem}>
-                <svg className={styles.shipFeatureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="8" width="18" height="12" rx="2" ry="2"/><path d="M3 12h18"/><path d="M12 8v12"/><path d="M7 4h10"/></svg>
-                Comfortable cabins<br/>with private bathrooms
-              </div>
-              <div className={styles.shipFeatureItem}>
-                <svg className={styles.shipFeatureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-                Spacious lounge<br/>& sun deck
-              </div>
-              <div className={styles.shipFeatureItem}>
-                <svg className={styles.shipFeatureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                Indoor-outdoor<br/>living
-              </div>
-              <div className={styles.shipFeatureItem}>
-                <svg className={styles.shipFeatureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Small group<br/>experience
-              </div>
-              <div className={styles.shipFeatureItem}>
-                <svg className={styles.shipFeatureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                Al fresco dining
-              </div>
-              <div className={styles.shipFeatureItem}>
-                <svg className={styles.shipFeatureIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                Knowledgeable<br/>guides on board
-              </div>
+            <h2 style={{color: "#E35E54", fontSize: "3.5rem", marginBottom: "20px", textShadow: "0 2px 4px rgba(0,0,0,0.8)"}}>Your home at sea: Archipel I</h2>
+            <p style={{fontSize: "1.2rem", color: "#fff", lineHeight: 1.6, marginBottom: "20px", textShadow: "0 1px 3px rgba(0,0,0,0.8)"}}>
+              A refined motorized catamaran designed for small-group exploration. With spacious social areas, cozy cabins and large decks to enjoy the beauty of Galapagos from sunrise to sunset.
+            </p>
+            <p style={{fontSize: "1.2rem", color: "#fff", lineHeight: 1.6, marginBottom: "30px", textShadow: "0 1px 3px rgba(0,0,0,0.8)"}}>
+              Share the journey with friends or a partner in an environment where you can truly be yourself, creating unforgettable memories both on land and at sea.
+            </p>
+            <div className={styles.shipFeatures} style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,0.8)", fontSize: "1.1rem" }}>
+              <span>✓ Private Balconies</span>
+              <span>✓ Panoramic Dining</span>
+              <span>✓ Jacuzzi on deck</span>
+              <span>✓ Stability & Comfort</span>
             </div>
           </div>
-          
-          <div className={styles.shipImagesSmall}>
-            <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800" alt="Cabin" className={styles.shipImageSmall} />
-            <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=800" alt="Dining" className={styles.shipImageSmall} />
-          </div>
-        </div>
-      </section>
-
-      {/* Horizontal Itineraries Section (From Image 2) as requested */}
-      <section className={styles.itinerariesSection}>
-        <div className="container">
-          <h2 className={styles.aboutContent} style={{fontSize: "2.5rem", color: "var(--primary)", marginBottom: "40px", textAlign: "left"}}>
-            <span style={{color: "#E35E54"}}>4 days of Unforgettable journeys</span> through<br/>Galapagos, Andes & Amazonia
-          </h2>
-          
-          <div className={styles.accordionContainer}>
-            {/* Galapagos */}
-            <div className={`${styles.accordionItem} ${activeAccordion === 'galapagos' ? styles.active : ''}`}>
-              {activeAccordion === 'galapagos' ? (
-                <div className={styles.accordionHeaderThin} onClick={() => toggleAccordion('galapagos')}>
-                  <div className={styles.accordionTitleThin}>
-                    <div className={styles.accordionIconThin} style={{backgroundColor: '#00838F'}}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </div>
-                    <span style={{color: '#00838F'}}>GALAPAGOS</span>
-                  </div>
-                  <svg className={styles.accordionChevron} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
-              ) : (
-                <div className={styles.accordionHeader} onClick={() => toggleAccordion('galapagos')}>
-                  <div className={styles.itineraryImageContainer}>
-                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Galapagos" className={styles.itineraryImage} />
-                  </div>
-                  <div className={styles.itineraryContent} style={{paddingLeft: '15px'}}>
-                    <div className={styles.itineraryHeader}>
-                      <h3 className={styles.itineraryTitle} style={{color: '#00838F'}}>GALAPAGOS</h3>
-                    </div>
-                    <p className={styles.itineraryDesc}>Sail through living landscapes in a luxury cruise. Encounter rare wildlife, pristine beaches, and volcanic islands like no other. Experience the ultimate adventure in one of the most unique ecosystems on the planet, where every day brings a new discovery.</p>
-                    
-                    <svg className={styles.itineraryIconGiant} viewBox="0 0 24 24" fill="none" stroke="#00838F" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    
-                    <button className={styles.btnToggleItinerary} style={{borderColor: '#00838F', color: '#00838F'}}>
-                      VIEW ITINERARY
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              <div className={styles.accordionContent}>
-                <div className={styles.accordionBody}>
-                  <p className={styles.programIntro}>Sail through living landscapes in a luxury cruise. Encounter rare wildlife, pristine beaches, and volcanic islands like no other.</p>
-                  
-                  <div className={styles.dayRow}>
-                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Arrival" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 1</span> San Cristobal</div>
-                      <p className={styles.dayDesc}>Arrival at San Cristobal airport and transfer to the harbour. In the afternoon, visit the Interpretation Centre to learn about the unique archipelago and its fascinating history, then hike to Frigatebird Hill for a panoramic view and to observe magnificent frigatebirds nesting. Enjoy a welcoming dinner aboard.</p>
-                    </div>
-                  </div>
-                  <div className={`${styles.dayRow} ${styles.reverse}`}>
-                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg" alt="Santa Fe" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 2</span> Santa Fe & South Plaza</div>
-                      <p className={styles.dayDesc}>Morning visit to Santa Fe, home to endemic species like the Galapagos hawk and sea lion colonies. Hike through the giant prickly pear cactus forest. Afternoon at South Plaza to observe hybrid land iguanas and swallow-tailed gulls nesting in rugged cliffs. A day full of unique wildlife encounters.</p>
-                    </div>
-                  </div>
-                  <div className={styles.dayRow}>
-                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg" alt="North Seymour" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 3</span> North Seymour & Chinese Hat</div>
-                      <p className={styles.dayDesc}>Explore North Seymour, an important nesting ground for blue-footed boobies and frigate birds. Later, approach the volcanic cone of Chinese Hat to observe Galapagos penguins and pioneer species sprouting on the unique lava fields. Snorkel in crystal-clear waters full of marine life.</p>
-                    </div>
-                  </div>
-                  <div className={`${styles.dayRow} ${styles.reverse}`}>
-                    <img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg" alt="Twin Craters" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#00838F'}}>Day 4</span> Twin Craters & Departure</div>
-                      <p className={styles.dayDesc}>Visit the lush scalesia forest of El Chato Tortoise Reserve and the impressive Twin Craters on Santa Cruz Island. See giant tortoises roaming in the wild before transferring to Baltra airport for your departure flight. Farewell to the enchanted islands.</p>
-                    </div>
-                  </div>
-                </div>
+          <div className={styles.shipDynamicImages} style={{ position: 'relative', height: '440px' }}>
+            {/* Photo 3 (bottom-RIGHT below ship) rises FIRST */}
+            {/* Photo 3 (bottom-center) rises FIRST */}
+            <div className={`${styles.shipImgCard} ${styles.shipImgOverlap2}`}
+              style={{ width: '55%', height: '220px', bottom: '-225px', left: '30%', right: 'auto', cursor: 'pointer' }}
+              onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg", "Sitting Area")}
+              data-parallax-speed="-0.22" data-parallax-stagger="0">
+              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sitting_area_3.jpg" alt="Sitting Area" /></div>
+              <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ZoomIn size={18} color="white" />
               </div>
             </div>
-
-            {/* Andes */}
-            <div className={`${styles.accordionItem} ${activeAccordion === 'andes' ? styles.active : ''}`}>
-              {activeAccordion === 'andes' ? (
-                <div className={styles.accordionHeaderThin} onClick={() => toggleAccordion('andes')}>
-                  <div className={styles.accordionTitleThin}>
-                    <div className={styles.accordionIconThin} style={{backgroundColor: '#D17B40'}}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </div>
-                    <span style={{color: '#D17B40'}}>ANDES</span>
-                  </div>
-                  <svg className={styles.accordionChevron} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
-              ) : (
-                <div className={`${styles.accordionHeader} ${styles.reverse}`} onClick={() => toggleAccordion('andes')}>
-                  <div className={styles.itineraryImageContainer}>
-                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Cotopaxi volcano eruption in Ecuador, South America.jpg" alt="Andes" className={styles.itineraryImage} />
-                  </div>
-                  <div className={styles.itineraryContent} style={{paddingLeft: '15px'}}>
-                    <div className={styles.itineraryHeader}>
-                      <h3 className={styles.itineraryTitle} style={{color: '#D17B40'}}>ANDES</h3>
-                    </div>
-                    <p className={styles.itineraryDesc}>Discover majestic mountains, colonial towns, and vibrant culture. A perfect blend of adventure and tradition. Immerse yourself in the rich history and breathtaking landscapes of the Ecuadorian highlands.</p>
-                    
-                    <svg className={styles.itineraryIconGiant} viewBox="0 0 24 24" fill="none" stroke="#D17B40" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    
-                    <button className={styles.btnToggleItinerary} style={{borderColor: '#D17B40', color: '#D17B40'}}>
-                      VIEW ITINERARY
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              <div className={styles.accordionContent}>
-                <div className={styles.accordionBody}>
-                  <p className={styles.programIntro}>Discover majestic mountains, colonial towns, and vibrant culture. A perfect blend of adventure and tradition with private transportation and personalized service.</p>
-                  
-                  <div className={styles.dayRow}>
-                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Basilica.jpg" alt="Quito" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 1</span> Colonial Quito & Middle of the World</div>
-                      <p className={styles.dayDesc}>A full-day exploration of Ecuador's capital. Visit Quito's beautifully preserved Historic Center with its colonial churches, then stand on the Equator at the Middle of the World Monument. Enjoy stunning views of the city from the Teleferico and immerse in local history.</p>
-                    </div>
-                  </div>
-                  <div className={`${styles.dayRow} ${styles.reverse}`}>
-                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Cotopaxi volcano eruption in Ecuador, South America.jpg" alt="Cotopaxi" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 2</span> Cotopaxi & Historic Hacienda</div>
-                      <p className={styles.dayDesc}>Enjoy a scenic drive to Cotopaxi National Park. Explore the Limpiopungo Lagoon observing wild horses and unique páramo vegetation, before relaxing at a traditional Andean hacienda surrounded by breathtaking mountain views. A truly spectacular alpine experience.</p>
-                    </div>
-                  </div>
-                  <div className={styles.dayRow}>
-                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Carretera vista al Cotopaxi.jpg" alt="Horseback Riding" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 3</span> Andes Horseback Riding & Drag Show</div>
-                      <p className={styles.dayDesc}>A memorable horseback riding experience through the beautiful highlands. Return to Quito in the evening to experience vibrant LGBTQ+ nightlife with a lively local drag show that celebrates diversity and inclusion in the capital.</p>
-                    </div>
-                  </div>
-                  <div className={`${styles.dayRow} ${styles.reverse}`}>
-                    <img src="/ANDES-20260720T162513Z-1-001/ANDES/Papallacta.jpg" alt="Papallacta" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#D17B40'}}>Day 4</span> Papallacta Hot Springs</div>
-                      <p className={styles.dayDesc}>Travel east across the Andes to relax in the famous natural thermal pools of Papallacta, surrounded by spectacular mountain scenery and fresh air. A perfect, rejuvenating end to your Andean adventure before returning home.</p>
-                    </div>
-                  </div>
-                </div>
+            {/* Photo 2 (bottom-left, girls) rises SECOND */}
+            {/* Photo 2 (bottom-left) rises SECOND */}
+            <div className={`${styles.shipImgCard} ${styles.shipImgOverlap1}`} 
+              style={{ bottom: '10px', left: '5%', width: '52%', height: '230px', zIndex: 2, transform: 'rotate(-4deg)', cursor: 'pointer' }}
+              onClick={() => openLightbox("/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg", "LGBT Couple")}
+              data-parallax-speed="-0.16" data-parallax-stagger="5">
+              <div className={styles.shipImgWrapper}><img src="/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg" alt="LGBT Couple" /></div>
+              <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ZoomIn size={18} color="white" />
               </div>
             </div>
-
-            {/* Amazonia */}
-            <div className={`${styles.accordionItem} ${activeAccordion === 'amazonia' ? styles.active : ''}`}>
-              {activeAccordion === 'amazonia' ? (
-                <div className={styles.accordionHeaderThin} onClick={() => toggleAccordion('amazonia')}>
-                  <div className={styles.accordionTitleThin}>
-                    <div className={styles.accordionIconThin} style={{backgroundColor: '#4CAF50'}}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </div>
-                    <span style={{color: '#4CAF50'}}>AMAZONIA</span>
-                  </div>
-                  <svg className={styles.accordionChevron} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
-              ) : (
-                <div className={styles.accordionHeader} onClick={() => toggleAccordion('amazonia')}>
-                  <div className={styles.itineraryImageContainer}>
-                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC08527.jpg" alt="Amazonia" className={styles.itineraryImage} />
-                  </div>
-                  <div className={styles.itineraryContent} style={{paddingLeft: '15px'}}>
-                    <div className={styles.itineraryHeader}>
-                      <h3 className={styles.itineraryTitle} style={{color: '#4CAF50'}}>AMAZONIA</h3>
-                    </div>
-                    <p className={styles.itineraryDesc}>Dive into the Amazon rainforest. Cruise rivers, spot exotic wildlife, and connect with rich plant life and local communities. Wake up to the sounds of the jungle and explore one of the most biodiverse regions on Earth.</p>
-                    
-                    <svg className={styles.itineraryIconGiant} viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    
-                    <button className={styles.btnToggleItinerary} style={{borderColor: '#4CAF50', color: '#4CAF50'}}>
-                      VIEW ITINERARY
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              <div className={styles.accordionContent}>
-                <div className={styles.accordionBody}>
-                  <p className={styles.programIntro}>Experience the Lower Cuyabeno aboard traditional dugout canoes, exploring pristine blackwater forests, spotting diverse wildlife, and witnessing the rainforest waking up at dawn.</p>
-                  
-                  <div className={styles.dayRow}>
-                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC08527.jpg" alt="Rainforest Journey" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 1</span> Journey to the Rainforest</div>
-                      <p className={styles.dayDesc}>Arrive at Cuyabeno Bridge and embark on a motorized canoe journey down the narrow river to your lodge, amazed by the incredible flora and fauna along the way. Settle in and enjoy the peaceful sounds of the rainforest as night falls.</p>
-                    </div>
-                  </div>
-                  <div className={`${styles.dayRow} ${styles.reverse}`}>
-                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC_0051.jpg" alt="Laguna Grande" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 2</span> Laguna Grande Exploration</div>
-                      <p className={styles.dayDesc}>Journey to Laguna Grande, a scenic blackwater lake, followed by a guided hike along the Palma Roja Trail to spot monkeys, toucans, and macaws. Complete the day with a thrilling night walk to see nocturnal creatures in their natural habitat.</p>
-                    </div>
-                  </div>
-                  <div className={styles.dayRow}>
-                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC_0121.jpg" alt="Amazon Expedition" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 3</span> Dawn to Sunset Adventure</div>
-                      <p className={styles.dayDesc}>Early morning expedition through the flooded forest to witness the sunrise and active wildlife. Afternoon canoe journey to La Bocana, where you may spot playful pink river dolphins and exotic birds soaring overhead.</p>
-                    </div>
-                  </div>
-                  <div className={`${styles.dayRow} ${styles.reverse}`}>
-                    <img src="/AMAZON-20260720T162515Z-1-001/AMAZON/DSC_0001.jpg" alt="Departure" className={styles.dayImage} />
-                    <div className={styles.dayInfo}>
-                      <div className={styles.dayTitle}><span className={styles.dayBadge} style={{backgroundColor: '#4CAF50'}}>Day 4</span> Goodbye Amazon</div>
-                      <p className={styles.dayDesc}>Enjoy a final breakfast at the lodge before journeying back up the river by motorized canoe, taking in the last sights and sounds of the Amazon, to meet your transportation for the return trip to Quito with unforgettable memories.</p>
-                    </div>
-                  </div>
-                </div>
+            {/* Photo 1 (top-right, ship) rises LAST */}
+            {/* Photo 1 (top-right) rises LAST */}
+            <div className={`${styles.shipImgCard} ${styles.shipImgMain}`} 
+              style={{ top: '-10%', right: '10%', left: 'auto', width: '65%', height: '280px', zIndex: 1, transform: 'rotate(3deg)', cursor: 'pointer' }}
+              onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg", "Cruise View")}
+              data-parallax-speed="-0.1" data-parallax-stagger="10">
+              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Exterior_view_1.jpg" alt="Cruise View" /></div>
+              <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ZoomIn size={18} color="white" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Wildlife Encounters & Welcoming Box */}
-      <section className={styles.wildlifeSection}>
-        <div className={`container ${styles.wildlifeGrid}`}>
-          <div className={styles.wildlifeLeft}>
-            <h3>Wildlife encounters<br/>that stay with you</h3>
-            <p>From giant tortoises to marine iguanas and blue-footed boobies, every day brings unique moments in nature.</p>
-            <div className={styles.animalsList}>
-              <div className={styles.animalItem}>
-                <img src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?auto=format&fit=crop&q=80&w=200" className={styles.animalCircle} alt="Giant Tortoise" />
-                <div className={styles.animalName}>Giant Tortoise</div>
+      {/* About Section - Second Content Block */}
+      <section className={styles.aboutSection} data-parallax-container style={{ backgroundColor: 'var(--light-bg)', position: 'relative', zIndex: 10, overflow: 'hidden', padding: '120px 0', minHeight: '750px' }}>
+        <div 
+          className={styles.heroBgParallax}
+          style={{ backgroundImage: "url('/LGBT/Caucasian men friend drinking champagne while having party in yacht. Attractive handsome male tourist hanging out celebrate holiday vacation trip while catamaran boat sailing during summer sunset..jpg')", top: '0%', backgroundPosition: '100% 30%', backgroundSize: 'auto 100%' }}
+          data-parallax-speed="0.08"
+        ></div>
+        {/* Gradient exactly as before — white on left fading to transparent on right */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.98) 30%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 65%)', zIndex: 1 }}></div>
+
+        <div className="container" style={{ position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: '1fr 0.7fr', gap: '80px', alignItems: 'center', marginLeft: '0', paddingLeft: '36px' }}>
+          {/* 3 PHOTOS — left column */}
+          <div className={styles.shipDynamicImages} style={{ height: '440px', transform: 'translateX(-20px)' }}>
+            {/* Photo 3 bottom-leftish — bigger, lower, RISES FIRST */}
+            <div className={`${styles.shipImgCard} ${styles.shipImgOverlap2}`}
+              style={{ background: '#00838F', width: '55%', height: '220px', bottom: '-210px', left: '10%', right: 'auto', transform: 'rotate(-2deg)', cursor: 'pointer' }}
+              onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg", "Dining")}
+              data-parallax-speed="-0.22" data-parallax-stagger="0">
+              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Dining_area_3.jpg" alt="Dining" /></div>
+              <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ZoomIn size={18} color="white" />
               </div>
-              <div className={styles.animalItem}>
-                <img src="https://images.unsplash.com/photo-1615099352684-250811e5fc23?auto=format&fit=crop&q=80&w=200" className={styles.animalCircle} alt="Blue-footed Booby" />
-                <div className={styles.animalName}>Blue-footed Booby</div>
+            </div>
+            {/* Photo 2 bottom-rightish — rises SECOND */}
+            <div className={`${styles.shipImgCard} ${styles.shipImgOverlap1}`}
+              style={{ background: '#00838F', bottom: '10px', left: '45%', width: '52%', height: '230px', zIndex: 2, transform: 'rotate(4deg)', cursor: 'pointer' }}
+              onClick={() => openLightbox("/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg", "LGBT Couple")}
+              data-parallax-speed="-0.16" data-parallax-stagger="5">
+              <div className={styles.shipImgWrapper}><img src="/LGBT/cute two young women having fun on the sunset beach, queer non-binary gender identity, gay lesbian love romance, boho summer vacation style wearing jeans.jpg" alt="LGBT Couple" /></div>
+              <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ZoomIn size={18} color="white" />
               </div>
-              <div className={styles.animalItem}>
-                <img src="https://images.unsplash.com/photo-1558231589-9851601a0528?auto=format&fit=crop&q=80&w=200" className={styles.animalCircle} alt="Marine Iguana" />
-                <div className={styles.animalName}>Marine Iguana</div>
-              </div>
-              <div className={styles.animalItem}>
-                <img src="https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&q=80&w=200" className={styles.animalCircle} alt="Sea Turtle" />
-                <div className={styles.animalName}>Sea Turtle</div>
-              </div>
-              <div className={styles.animalItem}>
-                <img src="https://images.unsplash.com/photo-1615099352684-250811e5fc23?auto=format&fit=crop&q=80&w=200" className={styles.animalCircle} alt="Galapagos Finch" />
-                <div className={styles.animalName}>Galapagos Finch</div>
+            </div>
+            {/* Photo 1 top-leftish — rises LAST */}
+            <div className={`${styles.shipImgCard} ${styles.shipImgMain}`}
+              style={{ background: '#00838F', top: '-9%', left: '10%', right: 'auto', width: '65%', height: '280px', zIndex: 1, transform: 'rotate(-3deg)', cursor: 'pointer' }}
+              onClick={() => openLightbox("/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg", "Sun Deck")}
+              data-parallax-speed="-0.1" data-parallax-stagger="10">
+              <div className={styles.shipImgWrapper}><img src="/Archipel I-20260720T160845Z-1-001/Archipel I/Archipel_I_2017_Sun_deck_4.jpg" alt="Sun Deck" /></div>
+              <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ZoomIn size={18} color="white" />
               </div>
             </div>
           </div>
-          
-          <div className={styles.welcomingBox}>
-            <div className={styles.welcomingContent}>
-              <h3>A welcoming space<br/>for LGBT+ travelers</h3>
-              <p>You&apos;ll travel, feel safe, and be YOU—just as you are.</p>
-              <ul className={styles.welcomeList}>
-                <li><svg className={styles.checkIcon} viewBox="0 0 24 24" fill="#E35E54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> LGBT+ friendly experience</li>
-                <li><svg className={styles.checkIcon} viewBox="0 0 24 24" fill="#E35E54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Respectful and inclusive environment</li>
-                <li><svg className={styles.checkIcon} viewBox="0 0 24 24" fill="#E35E54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Like-minded travelers, real connections</li>
-                <li><svg className={styles.checkIcon} viewBox="0 0 24 24" fill="#E35E54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Shared moments, not mass tourism</li>
-              </ul>
-            </div>
-            <img src="https://images.unsplash.com/photo-1520697920379-3baec16ec221?auto=format&fit=crop&q=80&w=800" alt="Happy LGBT Couple" className={styles.welcomingImage} />
-            <div className={styles.rainbowCorner}>
-              <svg viewBox="0 0 100 40" preserveAspectRatio="none" style={{width: '100%', height: '100%'}}>
-                 <path d="M0 40 L100 40 L100 0 C50 0 0 20 0 40 Z" fill="url(#rainbowGradient)"/>
-              </svg>
-            </div>
+
+          {/* TEXT — right column */}
+          <div data-parallax-speed="-0.08" data-parallax-stagger="0" style={{ textAlign: 'center', marginTop: '60px' }}>
+            <h2 style={{fontSize: "3.5rem", color: "var(--primary)", lineHeight: 1.1, marginBottom: "30px"}}>
+              A journey where you can be <span style={{color: "#E35E54"}}>fully yourself</span>
+            </h2>
+            <p style={{fontSize: "1.2rem", color: "#444", marginBottom: "20px", lineHeight: 1.6, fontWeight: 500}}>
+              This is more than a cruise. It&apos;s a space to explore one of the world&apos;s most pristine ecosystems with freedom, respect and joy.
+            </p>
+            <p style={{fontSize: "1.1rem", color: "#555", lineHeight: 1.6, marginBottom: "30px"}}>
+              We believe travel should be an authentic expression of who you are. Join like-minded travelers for meaningful conversations, genuine connections and unforgettable moments—always with pride.
+            </p>
           </div>
         </div>
+      </section>
+
+      {/* Main Galapagos Experience Scroll */}
+      <section style={{ position: 'relative', zIndex: 20 }}>
+        <GalapagosScroll />
       </section>
 
       {/* Life on Board */}
-      <section className={styles.lifeOnBoard}>
+      <section className={styles.lifeOnBoard} style={{ position: 'relative', zIndex: 10, backgroundColor: 'white' }}>
         <div className="container">
           <div className={styles.lifeOnBoardTitle}>Life on board</div>
           <div className={styles.lifeIcons}>
@@ -491,7 +374,7 @@ export default function Home() {
       </section>
 
       {/* Booking / Form Section */}
-      <section className={styles.bookingSection}>
+      <section className={styles.bookingSection} style={{ position: 'relative', zIndex: 10, backgroundColor: 'var(--light-bg)' }}>
         <div className={`container ${styles.bookingGrid}`}>
           <div className={styles.formBox}>
             <h3 style={{color: '#E35E54'}}>Ready to sail Galapagos with pride?</h3>
@@ -540,7 +423,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className={styles.footer}>
+      <footer className={styles.footer} style={{ position: 'relative', zIndex: 10 }}>
         <div className="container">
           <div className={styles.footerContent}>
             <div className={styles.logo}>
@@ -560,6 +443,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <Lightbox isOpen={lightboxState.isOpen} imageSrc={lightboxState.src} imageAlt={lightboxState.alt} onClose={() => setLightboxState({ ...lightboxState, isOpen: false })} />
     </main>
   );
 }

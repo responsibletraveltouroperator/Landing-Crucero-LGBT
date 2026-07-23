@@ -1,0 +1,271 @@
+.explorerSection {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  transition: background 0.8s ease;
+}
+
+.stickyHeader {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+
+.tabsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  backdrop-filter: blur(5px);
+}
+
+.tabBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.activeTab {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* GSAP Pin Container */
+.pinContainer {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontalWrapper {
+  display: flex;
+  width: max-content;
+  height: 100vh;
+  align-items: center;
+}
+
+/* 100vw Slide for 2 days */
+.slideScreen {
+  width: 100vw;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10vw;
+}
+
+/* Collage */
+.collageColumn {
+  width: 45%;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.collageItem {
+  position: relative;
+  width: 80%;
+  height: 45%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+
+.collageItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.collagePos1 {
+  align-self: flex-start;
+  z-index: 2;
+}
+
+.collagePos2 {
+  align-self: flex-end;
+  margin-top: -10%;
+  z-index: 1;
+}
+
+.collageItem:hover {
+  transform: scale(1.03);
+  z-index: 10;
+}
+
+.collageItem:hover img {
+  transform: scale(1.1);
+}
+
+.hoverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hoverOverlay span {
+  color: white;
+  font-weight: 600;
+  border: 1px solid white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(2px);
+  font-size: 0.85rem;
+}
+
+.collageItem:hover .hoverOverlay {
+  opacity: 1;
+}
+
+/* Text */
+.textColumn {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.dayTextItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.dayBadge {
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  align-self: flex-start;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dayTitle {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  font-family: var(--font-heading);
+}
+
+.dayDesc {
+  color: #444;
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.endCard {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btnPrimary {
+  padding: 14px 30px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  letter-spacing: 1px;
+}
+
+.btnPrimary:hover {
+  opacity: 0.9;
+}
+
+/* Map Indicator at Bottom */
+.mapContainer {
+  position: absolute;
+  bottom: 8vh;
+  left: 10vw;
+  right: 10vw;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  z-index: 50;
+}
+
+.mapLine {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.mapIconWrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 5;
+  transition: transform 0.1s;
+}
+
+.mapPin {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  display: flex;
+  z-index: 1;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 900px) {
+  .slideScreen {
+    flex-direction: column;
+    justify-content: center;
+    gap: 30px;
+  }
+  .collageColumn, .textColumn {
+    width: 100%;
+  }
+  .collageColumn {
+    height: 40vh;
+  }
+  .dayTitle {
+    font-size: 1.5rem;
+  }
+}

@@ -1,0 +1,195 @@
+.explorerSection {
+  position: relative;
+  background-color: var(--dark-bg, #111);
+  color: white;
+}
+
+.pinContainer {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.horizontalWrapper {
+  display: flex;
+  height: 100%;
+  width: fit-content;
+}
+
+.slideScreen {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slideBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.slideOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%);
+  z-index: 1;
+}
+
+.slideContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  gap: 60px;
+}
+
+.collageColumn {
+  flex: 1.3;
+  position: relative;
+  height: 60vh;
+}
+
+.collageItem {
+  position: absolute;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.collageItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.collageItem:hover {
+  transform: translateY(-10px) scale(1.02);
+  z-index: 10;
+}
+
+.collageItem:hover img {
+  transform: scale(1.1);
+}
+
+.collagePos1 {
+  width: 60%;
+  height: 60%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.collagePos2 {
+  width: 50%;
+  height: 50%;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
+}
+
+.hoverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.collageItem:hover .hoverOverlay {
+  opacity: 1;
+}
+
+.hoverOverlay span {
+  color: white;
+  font-weight: bold;
+  border: 1px solid white;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.textColumn {
+  flex: 0.7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dayBadge {
+  background-color: #E35E54;
+  color: white;
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.dayTitle {
+  font-size: 3rem;
+  font-family: var(--font-heading);
+  margin-bottom: 20px;
+  line-height: 1.1;
+}
+
+.dayDesc {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.mapContainer {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 1000px;
+  height: 120px;
+  z-index: 10;
+}
+
+.treasureSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 900px) {
+  .slideContent {
+    flex-direction: column;
+    padding-top: 80px;
+  }
+  .collageColumn {
+    height: 30vh;
+  }
+  .dayTitle {
+    font-size: 2rem;
+  }
+}

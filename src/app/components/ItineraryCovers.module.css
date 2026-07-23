@@ -1,0 +1,145 @@
+.coversSection {
+  padding: 100px 0;
+  background-color: var(--light-bg);
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 50px;
+  text-align: center;
+  font-family: var(--font-heading);
+}
+
+.coversGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.coverCard {
+  position: relative;
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.coverCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.coverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.coverCard:hover .coverImage {
+  transform: scale(1.05);
+}
+
+.coverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
+}
+
+.coverContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px 30px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.coverTitle {
+  font-size: 3.5rem;
+  font-family: var(--font-heading);
+  margin-bottom: 5px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  font-style: italic; /* Vice City style */
+}
+
+.coverSubtitle {
+  font-size: 1rem;
+  margin-bottom: 25px;
+  opacity: 0.9;
+}
+
+.btnDiscover {
+  background: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.coverCard:hover .btnDiscover {
+  transform: scale(1.05);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  z-index: 9999; /* Above everything */
+  overflow: hidden;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.btnClose {
+  position: absolute;
+  top: 20px;
+  left: 30px; /* Positioned top left to go back */
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10000;
+  transition: background 0.3s;
+}
+
+.btnClose:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.modalContent {
+  width: 100%;
+  height: 100%;
+  /* We render ItineraryExplorer inside here */
+}
+
+@media (max-width: 900px) {
+  .coversGrid {
+    grid-template-columns: 1fr;
+  }
+}
